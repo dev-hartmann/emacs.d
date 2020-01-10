@@ -274,10 +274,10 @@
           treemacs-goto-tag-strategy             'refetch-index
           treemacs-indentation                   2
           treemacs-indentation-string            " "
-          treemacs-is-never-other-window         nil
-          treemacs-max-git-entries               5000
-          treemacs-missing-project-action        'ask
-          treemacs-no-png-images                 nil
+         treemacs-is-never-other-window         nil
+         treemacs-max-git-entries               5000
+         treemacs-missing-project-action        'ask
+         treemacs-no-png-images                 nil
           treemacs-no-delete-other-windows       t
           treemacs-project-follow-cleanup        nil
           treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
@@ -391,6 +391,7 @@
     ("g" text-scale-increase)
     ("l" text-scale-decrease)))
 
+;; language stuff
 (use-package clojure-mode
   :ensure t
   :config
@@ -407,6 +408,20 @@
   (add-hook 'cider-repl-mode-hook #'smartparens-mode)
   (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode))
 
+(use-package tide
+  :ensure t
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (before-save . tide-format-before-save)))
+
+(use-package go-mode
+  :ensure t)
+
+(use-package  go-eldoc)
+(use-package  go-autocomplete)
+
+
 (use-package swiper
   :ensure t
   :config (progn
@@ -414,13 +429,14 @@
             (setq ivy-use-virtual-buffers t)
             (global-set-key "\C-s" 'swiper)
             (global-set-key "\C-r" 'swiper)
-            (global-set-key (kbd "C-c C-r") 'ivy-resume)
+            (global-set-key (kbd "C-c C-r") 'ivy-resume)     
             (global-set-key [f6] 'ivy-resume) 
             (setq ivy-display-style 'fancy)
             (defun bjm-swiper-recenter (&rest args)
               "recenter display after swiper"
               (recenter))
             (advice-add 'swiper :after #'bjm-swiper-recenter)))
+
 
 (use-package windmove
   ;; :defer 4
@@ -431,6 +447,12 @@
   ;; wrap around at edges
   (setq windmove-wrap-around t))
 
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C-M-n" . mc/mark-next-like-this)
+         ("C-M-u" . mc/unmark-next-like-this)
+         ("<mouse-1>" . mc/add-cursor-on-click))) 
+
 (use-package org
   :ensure t
   :config
@@ -440,11 +462,11 @@
      '((clojure . t)
        (emacs-lisp . t)
        (shell . t)))
-    (setq org-babel-clojure-backend 'cider)))
+    (setq org-babel-clojure-backend 'cider)))     
 
 ;; Presentations wit reveal.js
 (use-package ox-reveal
- :ensure t)
+  :ensure t)
 
 (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
 (setq org-reveal-mathjax t)
@@ -500,12 +522,6 @@
                           (recents  . 5)))
   (dashboard-setup-startup-hook))
 
-;; Golang stuff
-(use-package go-mode
-  :ensure t)
-
-(use-package  go-eldoc)
-(use-package  go-autocomplete)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -514,7 +530,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (hugsql-ghosts atom-one-dark-theme go-mode dired-subtree all-the-icons-dired dired-sidebar which-key use-package undo-tree spaceline smooth-scroll smartparens smart-mode-line ranger rainbow-delimiters popwin ox-reveal osx-trash nlinum neotree mwim magit hydra htmlize git-gutter-fringe focus exec-path-from-shell elpy dashboard darkroom counsel-projectile company-quickhelp cider ag))))
+    (multiple-cursors tide hugsql-ghosts atom-one-dark-theme go-mode dired-subtree all-the-icons-dired dired-sidebar which-key use-package undo-tree spaceline smooth-scroll smartparens smart-mode-line ranger rainbow-delimiters popwin ox-reveal osx-trash nlinum neotree mwim magit hydra htmlize git-gutter-fringe focus exec-path-from-shell elpy dashboard darkroom counsel-projectile company-quickhelp cider ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
