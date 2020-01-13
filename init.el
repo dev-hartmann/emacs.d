@@ -73,6 +73,20 @@
   (setq mac-option-modifier 'meta)
   (setq mac-right-option-modifier nil))
 
+;; make emacs aware of your shell path
+(use-package exec-path-from-shell
+  :ensure t
+  :if (not (eq system-type 'windows-nt))
+  :init (exec-path-from-shell-initialize))
+
+;; get linum right
+(use-package nlinum
+  :init
+  (progn
+    (add-hook 'prog-mode-hook 'nlinum-mode)
+    (add-hook 'text-mode-hook 'nlinum-mode)
+    (setq nlinum-format "%4d")))
+
 ;; Needs to move to os specific settings 
 (use-package osx-trash                 
   :if (eq system-type 'darwin)
@@ -86,8 +100,26 @@
   (doom-themes-visual-bell-config))
 
 
-;; following list of packages and keybindings needs to be seperated into multiple files etc. to keep this file sane ;)
-;;; navigation
+;;;;; following list of packages and keybindings needs to be seperated into multiple files etc. to keep this file sane ;)
+;;;; Movement
+;; smooth scrolling
+(use-package smooth-scroll
+  :ensure t
+  :if (display-graphic-p)
+  :diminish smooth-scroll-mode
+  :config
+  (setq smooth-scroll/vscroll-step-size 8)
+  (smooth-scroll-mode))
+
+;; Move where I mean -> (part of better defaults)
+(use-package mwim
+  :ensure t
+  :defer t
+  :init
+  (progn
+    (global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
+    (global-set-key (kbd "C-e") 'mwim-end-of-code-or-line)))
+
 
 ;; ivy
 (use-package ivy
@@ -102,6 +134,7 @@
   (load "~/.emacs.d/custom/ivy_buffer_extend.el")
   (require 'ivy_buffer_extend))
 
+;; dir management
 (use-package ranger
   :ensure t
   :commands (ranger)
@@ -119,6 +152,7 @@
 
 (use-package smart-mode-line :ensure t)
 
+;;file editing
 (use-package undo-tree
   :ensure t
   :diminish undo-tree-mode
@@ -128,14 +162,6 @@
     (setq undo-tree-visualizer-timestamps t)
     (setq undo-tree-visualizer-diff t)))
 
-;; Mover where I mean -> (part of better defaults)
- (use-package mwim
-   :ensure t
-   :defer t
-   :init
-    (progn
-      (global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
-      (global-set-key (kbd "C-e") 'mwim-end-of-code-or-line)))
 
 ;; for working project-based
 (use-package projectile
@@ -151,63 +177,16 @@
   :config
   (counsel-projectile-mode))
 
-;; smooth scrolling
-(use-package smooth-scroll
+(use-package windmove
+  ;; :defer 4
   :ensure t
-  :if (display-graphic-p)
-  :diminish smooth-scroll-mode
   :config
-  (setq smooth-scroll/vscroll-step-size 8)
-  (smooth-scroll-mode))
+  ;; use command key on Mac
+  (windmove-default-keybindings 'super)
+  ;; wrap around at edges
+  (setq windmove-wrap-around t))
 
-;; highlight changes
-(use-package git-gutter-fringe
-  :ensure t
-  :diminish git-gutter-mode
-  :init (global-git-gutter-mode))
-
-(use-package git-timemachine
-  :ensure t
-  :defer t)
-  
-;;; Searching
-(use-package ag
-  :commands (ag ag-files ag-regexp ag-project ag-dired helm-ag)
-  :config (setq ag-highlight-search t
-                ag-reuse-buffers t))
-
-;; autocomplete stuff
-(use-package company               
-  :ensure t
-  :defer t
-  :init (global-company-mode t)
-  :config
-    (setq company-tooltip-align-annotations t
-          company-idle-delay 0.2
-          ;; min prefix of 2 chars
-          company-minimum-prefix-length 2
-          company-require-match nil))
-
-;; Show help in tooltip
-(use-package company-quickhelp          
-    :ensure t
-    :defer t
-    :init (with-eval-after-load 'company
-            (company-quickhelp-mode)))
-
-(use-package company-box
-  :init
-  (progn
-    (add-hook 'company-mode-hook 'company-box-mode)))
-
-
-;; show possible commands in minibuffer
-(use-package which-key
-  :ensure t
-  :diminish which-key-mode
-  :config (which-key-mode))
-
-;; magit
+;; GIT
 (use-package magit
   :ensure t
   :commands (magit-status projectile-vc)
@@ -218,19 +197,82 @@
 
 (global-git-commit-mode)
 
-;; make emacs aware of your shell path
-(use-package exec-path-from-shell
+;; show fringes for changes in buffer
+(use-package git-gutter-fringe
   :ensure t
-  :if (not (eq system-type 'windows-nt))
-  :init (exec-path-from-shell-initialize))
+  :diminish git-gutter-mode
+  :init (global-git-gutter-mode))
 
-;; get linum right
- (use-package nlinum
-    :init
-    (progn
-      (add-hook 'prog-mode-hook 'nlinum-mode)
-      (add-hook 'text-mode-hook 'nlinum-mode)
-      (setq nlinum-format "%4d")))
+(use-package git-timemachine
+  :ensure t
+  :defer t)
+
+;;; Searching
+(use-package ag
+  :commands (ag ag-files ag-regexp ag-project ag-dired helm-ag)
+  :config (setq ag-highlight-search t
+                ag-reuse-buffers t))
+
+;; Autocompletion
+(use-package company               
+  :ensure t
+  :defer t
+  :init (global-company-mode t)
+  :config
+  (setq company-tooltip-align-annotations t
+        company-idle-delay 0.2
+        ;; min prefix of 2 chars
+        company-minimum-prefix-length 2
+        company-require-match nil))
+
+;; Show help in tooltip
+(use-package company-quickhelp          
+  :ensure t
+  :defer t
+  :init (with-eval-after-load 'company
+          (company-quickhelp-mode)))
+
+(use-package company-box
+  :init
+  (progn
+    (add-hook 'company-mode-hook 'company-box-mode)))
+
+;; Language Server Protocol
+(use-package lsp-mode
+  :ensure t
+  :init (setq lsp-inhibit-message t
+              lsp-eldoc-render-all nil
+              lsp-highlight-symbol-at-point nil))
+
+(use-package company-lsp
+  :after  company
+  :ensure t
+  :config
+  (setq company-lsp-enable-snippet t
+        company-lsp-cache-candidates t))
+
+(use-package lsp-ui
+  :ensure t
+  :config
+  (setq lsp-ui-sideline-enable t
+        lsp-ui-sideline-show-symbol t
+        lsp-ui-sideline-show-hover t
+        lsp-ui-sideline-show-code-actions t
+        lsp-ui-sideline-update-mode 'point))
+
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+;; optionally if you want to use debugger
+
+(use-package dap-mode
+  :ensure t)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+
+;; show possible commands in minibuffer
+(use-package which-key
+  :ensure t
+  :diminish which-key-mode
+  :config (which-key-mode))
 
 ;; snippets
 (use-package yasnippet
@@ -251,7 +293,7 @@
   :diminish yas-minor-mode)
 
 
-;; neotree
+;; Filetree 
 (use-package treemacs
   :ensure t
   :defer t
@@ -274,10 +316,10 @@
           treemacs-goto-tag-strategy             'refetch-index
           treemacs-indentation                   2
           treemacs-indentation-string            " "
-         treemacs-is-never-other-window         nil
-         treemacs-max-git-entries               5000
-         treemacs-missing-project-action        'ask
-         treemacs-no-png-images                 nil
+          treemacs-is-never-other-window         nil
+          treemacs-max-git-entries               5000
+          treemacs-missing-project-action        'ask
+          treemacs-no-png-images                 nil
           treemacs-no-delete-other-windows       t
           treemacs-project-follow-cleanup        nil
           treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
@@ -321,7 +363,10 @@
 
 (use-package treemacs-projectile
   :after treemacs projectile
-  :ensure t)
+  :ensure t
+  :bind
+  (:map global-map
+        ("C-c o p" . treemacs-projectile)))
 
 (use-package treemacs-icons-dired
   :after treemacs dired
@@ -332,6 +377,7 @@
   :after treemacs magit
   :ensure t)
 
+;;;; Programming setup
 ;; Smartparens all the things
 (use-package smartparens
   :ensure t
@@ -391,7 +437,6 @@
     ("g" text-scale-increase)
     ("l" text-scale-decrease)))
 
-;; language stuff
 (use-package clojure-mode
   :ensure t
   :config
@@ -415,12 +460,24 @@
          (typescript-mode . tide-hl-identifier-mode)
          (before-save . tide-format-before-save)))
 
-(use-package go-mode
+(use-package lsp-java
+  :ensure t
+  :requires (lsp-ui-flycheck lsp-ui-sideline)
+  :hook
+  (java-mode . (lambda () (add-to-list (make-local-variable 'company-backends) 'company-lsp)))
+  (java-mode . lsp-java-enable)
+  (java-mode . flycheck-mode)
+  (java-mode . (lambda () (lsp-ui-flycheck-enable t)))
+  (java-mode . lsp-ui-sideline-mode)
+  :config
+  (setq lsp-java-save-action-organize-imports nil))
+
+(use-package dap-java
+  :ensure nil
+  :after (lsp-java))
+
+(use-package java-snippets
   :ensure t)
-
-(use-package  go-eldoc)
-(use-package  go-autocomplete)
-
 
 (use-package swiper
   :ensure t
@@ -429,7 +486,7 @@
             (setq ivy-use-virtual-buffers t)
             (global-set-key "\C-s" 'swiper)
             (global-set-key "\C-r" 'swiper)
-            (global-set-key (kbd "C-c C-r") 'ivy-resume)     
+            (global-set-key (kbd "C-c C-r") 'ivy-resume)
             (global-set-key [f6] 'ivy-resume) 
             (setq ivy-display-style 'fancy)
             (defun bjm-swiper-recenter (&rest args)
@@ -437,32 +494,6 @@
               (recenter))
             (advice-add 'swiper :after #'bjm-swiper-recenter)))
 
-
-(use-package windmove
-  ;; :defer 4
-  :ensure t
-  :config
-  ;; use command key on Mac
-  (windmove-default-keybindings 'super)
-  ;; wrap around at edges
-  (setq windmove-wrap-around t))
-
-(use-package multiple-cursors
-  :ensure t
-  :bind (("C-M-n" . mc/mark-next-like-this)
-         ("C-M-u" . mc/unmark-next-like-this)
-         ("<mouse-1>" . mc/add-cursor-on-click))) 
-
-(use-package org
-  :ensure t
-  :config
-  (progn
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((clojure . t)
-       (emacs-lisp . t)
-       (shell . t)))
-    (setq org-babel-clojure-backend 'cider)))     
 
 ;; Presentations wit reveal.js
 (use-package ox-reveal
@@ -480,10 +511,10 @@
   (global-aggressive-indent-mode))
 
 (use-package elpy
-    :init
-    (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
-    :custom
-    (elpy-rpc-backend "jedi"))
+  :init
+  (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
+  :custom
+  (elpy-rpc-backend "jedi"))
 
 (use-package python
   :ensure nil
@@ -491,6 +522,22 @@
   :config
   (setq python-indent-offset 4)
   (elpy-enable))
+
+(use-package go-mode
+  :ensure t)
+
+(use-package  go-eldoc)
+(use-package  go-autocomplete)
+
+;; config-languages
+(use-package markdown-mode
+  :ensure t
+  :mode "\\.md\\'")
+
+(use-package yaml-mode
+  :ensure t
+  :mode "\\.yaml\\'")
+
 
 (use-package flycheck
   :ensure t
@@ -513,6 +560,19 @@
   :config
   (eval-after-load 'flycheck '(flycheck-clojure-setup)))
 
+;;ORG stuff
+(use-package org
+  :ensure t
+  :config
+  (progn
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((clojure . t)
+       (emacs-lisp . t)
+       (shell . t)))
+    (setq org-babel-clojure-backend 'cider)))
+
+
 ;; Nice Dashboard when you start emacs
 (use-package dashboard
   :config
@@ -530,7 +590,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (multiple-cursors tide hugsql-ghosts atom-one-dark-theme go-mode dired-subtree all-the-icons-dired dired-sidebar which-key use-package undo-tree spaceline smooth-scroll smartparens smart-mode-line ranger rainbow-delimiters popwin ox-reveal osx-trash nlinum neotree mwim magit hydra htmlize git-gutter-fringe focus exec-path-from-shell elpy dashboard darkroom counsel-projectile company-quickhelp cider ag))))
+    (dap-java java-snippets lsp-java lsp-ui company-lsp dap-mode markdown-mode yaml-mode tide nlinum-hl hugsql-ghosts atom-one-dark-theme go-mode dired-subtree all-the-icons-dired dired-sidebar which-key use-package undo-tree spaceline smooth-scroll smartparens smart-mode-line ranger rainbow-delimiters popwin ox-reveal osx-trash nlinum neotree mwim magit hydra htmlize git-gutter-fringe focus exec-path-from-shell elpy dashboard darkroom counsel-projectile company-quickhelp cider ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
