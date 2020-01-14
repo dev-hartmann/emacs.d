@@ -96,9 +96,16 @@
 (use-package doom-themes
   :ensure t
   :config
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
   (load-theme 'doom-one t)
-  (doom-themes-visual-bell-config))
+  (doom-themes-visual-bell-config)
+  (doom-themes-treemacs-config))
 
+(use-package doom-modeline
+  :ensure t
+  :defer t
+  :hook (after-init . doom-modeline-init))
 
 ;;;;; following list of packages and keybindings needs to be seperated into multiple files etc. to keep this file sane ;)
 ;;;; Movement
@@ -134,13 +141,7 @@
   (load "~/.emacs.d/custom/ivy_buffer_extend.el")
   (require 'ivy_buffer_extend))
 
-;; dir management
-(use-package ranger
-  :ensure t
-  :commands (ranger)
-  :bind (("C-x d" . deer))
-  :config
-  (setq ranger-cleanup-eagerly t))
+
 
 (use-package winner
   :ensure t
@@ -150,9 +151,16 @@
   :ensure t
   :config (popwin-mode 1)) 
 
-(use-package smart-mode-line :ensure t)
+;;;;FILE management and editing
+;; dir management
+(use-package ranger
+  :ensure t
+  :commands (ranger)
+  :bind (("C-x d" . deer))
+  :config
+  (setq ranger-cleanup-eagerly t))
 
-;;file editing
+;;change management
 (use-package undo-tree
   :ensure t
   :diminish undo-tree-mode
@@ -191,9 +199,10 @@
   :ensure t
   :commands (magit-status projectile-vc)
   :config
-  (add-to-list 'magit-log-arguments "--no-abbrev-commit")
   (setq magit-popup-use-prefix-argument 'default
-        magit-completing-read-function 'ivy-completing-read))
+        magit-completing-read-function 'ivy-completing-read)
+  :bind
+  (("C-x s" . magit-status)))
 
 (global-git-commit-mode)
 
@@ -206,6 +215,8 @@
 (use-package git-timemachine
   :ensure t
   :defer t)
+
+(use-package github-pullrequest)
 
 ;;; Searching
 (use-package ag
@@ -590,7 +601,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (dap-java java-snippets lsp-java lsp-ui company-lsp dap-mode markdown-mode yaml-mode tide nlinum-hl hugsql-ghosts atom-one-dark-theme go-mode dired-subtree all-the-icons-dired dired-sidebar which-key use-package undo-tree spaceline smooth-scroll smartparens smart-mode-line ranger rainbow-delimiters popwin ox-reveal osx-trash nlinum neotree mwim magit hydra htmlize git-gutter-fringe focus exec-path-from-shell elpy dashboard darkroom counsel-projectile company-quickhelp cider ag))))
+    (doom-modeline all-the-icons dap-java java-snippets lsp-java lsp-ui company-lsp dap-mode markdown-mode yaml-mode tide nlinum-hl hugsql-ghosts atom-one-dark-theme go-mode dired-subtree all-the-icons-dired dired-sidebar which-key use-package undo-tree spaceline smooth-scroll smartparens smart-mode-line ranger rainbow-delimiters popwin ox-reveal osx-trash nlinum neotree mwim magit hydra htmlize git-gutter-fringe focus exec-path-from-shell elpy dashboard darkroom counsel-projectile company-quickhelp cider ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
