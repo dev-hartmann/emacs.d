@@ -17,6 +17,7 @@
 (setq ns-use-srgb-colorspace nil)
 
 ;; editor text stuff
+(delete-selection-mode 1)
 (setq coding-system-for-read 'utf-8 )	; use utf-8 by default
 (setq coding-system-for-write 'utf-8 )
 (setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
@@ -100,12 +101,21 @@
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
   (load-theme 'doom-one t)
   (doom-themes-visual-bell-config)
+  (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
   (doom-themes-treemacs-config))
 
 (use-package doom-modeline
   :ensure t
   :defer t
   :hook (after-init . doom-modeline-init))
+
+(use-package shell-pop
+  :bind (("C-t" . shell-pop))
+  :config
+  (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
+  (setq shell-pop-term-shell "/bin/zsh")
+  ;; need to do this manually or not picked up by `shell-pop'
+  (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type))
 
 ;;;;; following list of packages and keybindings needs to be seperated into multiple files etc. to keep this file sane ;)
 ;;;; Movement
@@ -252,13 +262,14 @@
 (use-package lsp-mode
   :ensure t
   :init (setq lsp-inhibit-message t
-              lsp-eldoc-render-all nil
+              lsp-eldoc-render-all t
               lsp-highlight-symbol-at-point nil))
 
 (use-package company-lsp
   :after  company
   :ensure t
   :config
+  (add-hook 'java-mode-hook (lambda () (push 'company-lsp company-backends)))
   (setq company-lsp-enable-snippet t
         company-lsp-cache-candidates t))
 
@@ -268,11 +279,10 @@
   (setq lsp-ui-sideline-enable t
         lsp-ui-sideline-show-symbol t
         lsp-ui-sideline-show-hover t
-        lsp-ui-sideline-show-code-actions t
+        lsp-ui-sideline-show-code-actions nil
         lsp-ui-sideline-update-mode 'point))
 
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-;; optionally if you want to use debugger
 
 (use-package dap-mode
   :ensure t)
@@ -430,7 +440,8 @@
 
 (use-package counsel-projectile :ensure t
   :bind* (("C-P" . counsel-projectile-switch-to-buffer)
-          ("C-c p p" . counsel-projectile-switch-project))
+          ("C-c p p" . counsel-projectile-switch-project)
+          ("C-c p f" . counsel-projectile-find-file))
   :config
   (counsel-projectile-mode))
 
@@ -473,15 +484,14 @@
 
 (use-package lsp-java
   :ensure t
-  :requires (lsp-ui-flycheck lsp-ui-sideline)
-  :hook
-  (java-mode . (lambda () (add-to-list (make-local-variable 'company-backends) 'company-lsp)))
-  (java-mode . lsp-java-enable)
-  (java-mode . flycheck-mode)
-  (java-mode . (lambda () (lsp-ui-flycheck-enable t)))
-  (java-mode . lsp-ui-sideline-mode)
+  :requires (lsp-ui-flycheck lsp-ui-sideline)  
   :config
-  (setq lsp-java-save-action-organize-imports nil))
+  (add-hook 'java-mode-hook  'lsp-java-enable)
+  (add-hook 'java-mode-hook  'flycheck-mode)
+  (add-hook 'java-mode-hook  'company-mode)
+  (add-hook 'java-mode-hook  (lambda () (lsp-ui-flycheck-enable t)))
+  (add-hook 'java-mode-hook  'lsp-ui-sideline-mode)
+  (setq lsp-java--workspace-folders (list "/home/macsetup/work/portal/autoscheduler/backend/" )))
 
 (use-package dap-java
   :ensure nil
@@ -601,7 +611,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (doom-modeline all-the-icons dap-java java-snippets lsp-java lsp-ui company-lsp dap-mode markdown-mode yaml-mode tide nlinum-hl hugsql-ghosts atom-one-dark-theme go-mode dired-subtree all-the-icons-dired dired-sidebar which-key use-package undo-tree spaceline smooth-scroll smartparens smart-mode-line ranger rainbow-delimiters popwin ox-reveal osx-trash nlinum neotree mwim magit hydra htmlize git-gutter-fringe focus exec-path-from-shell elpy dashboard darkroom counsel-projectile company-quickhelp cider ag))))
+    (shell-pop doom-modeline all-the-icons dap-java java-snippets lsp-java lsp-ui company-lsp dap-mode markdown-mode yaml-mode tide nlinum-hl hugsql-ghosts atom-one-dark-theme go-mode dired-subtree all-the-icons-dired dired-sidebar which-key use-package undo-tree spaceline smooth-scroll smartparens smart-mode-line ranger rainbow-delimiters popwin ox-reveal osx-trash nlinum neotree mwim magit hydra htmlize git-gutter-fringe focus exec-path-from-shell elpy dashboard darkroom counsel-projectile company-quickhelp cider ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
