@@ -26,11 +26,9 @@
   :demand
   :hook
   (focus-out-hook . gcmh-idle-garbage-collect)
-
   :custom
   (gcmh-idle-delay 10)
   (gcmh-high-cons-threshold 104857600)
-
   :config
   (gcmh-mode +1))
 
@@ -39,6 +37,9 @@
   (setq user-home-directory (getenv "HOME"))
   (setq user-customizations-directory (concat user-emacs-directory "custom/"))
   (add-to-list 'load-path user-customizations-directory))
+
+;; start emacs as server to send files from cli/shell to this instance
+(server-start)
 
 (setup-load-path)
 
@@ -53,4 +54,6 @@
 (require 'core-code)
 
 (require 'clojure)
+(require 'python-lang)
+(require 'typescript)
 (require 'devops)

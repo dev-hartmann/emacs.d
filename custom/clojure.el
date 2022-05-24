@@ -1,29 +1,25 @@
 ;;; cljojure.el
 (use-package clojure-mode
+  :magic ("^#![^\n]*/\\(clj\\|clojure\\|bb\\|lumo\\)" . clojure-mode)
+  :init
+  (add-to-list 'auto-mode-alist '("\\.ednl$" . clojure-mode))
   :config
-  (add-hook 'clojure-mode-hook #'smartparens-mode)
-  (add-hook 'clojure-mode-hook #'subword-mode)
-  (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
-  (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
-  (add-hook 'clojure-mode-hook #'yas-minor-mode))
+  (setq clojure-toplevel-inside-comment-form t
+        ;; Because of CIDER's insistence to send forms to all linked REPLs, we
+        ;; *have* to be able to switch cljc buffer to clj/cljs mode without
+        ;; cider complaining.
+        clojure-verify-major-mode nil))
 
 (use-package cider
-  :init (add-hook 'cider-mode-hook #'clj-refactor-mode)
-  :diminish subword-mode
+  :diminish cider-mode
   :config
-  (setq nrepl-log-messages t
-        cider-repl-display-in-current-window t
-        cider-repl-use-clojure-font-lock t
-        cider-prompt-save-file-on-load 'always-save
-        cider-font-lock-dynamically '(macro core function var)
-        nrepl-hide-special-buffers t
-        cider-overlays-use-font-lock t)
-  (cider-repl-toggle-pretty-printing))
+  (setq cider-preferred-build-tool 'clojure-cli))
 
 (use-package clj-refactor
   :defer t
   :diminish clj-refactor-mode
   :config (cljr-add-keybindings-with-prefix "C-c C-m"))
+
 
 (provide 'clojure)
 ;;; clojure.el ends here

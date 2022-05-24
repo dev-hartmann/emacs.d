@@ -10,6 +10,7 @@
 (savehist-mode t)
 (recentf-mode t)
 
+
 (use-package exec-path-from-shell
   :custom
   (exec-path-from-shell-variables '("PATH"

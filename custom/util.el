@@ -46,5 +46,17 @@
 (global-set-key (kbd "M-<up>") 'move-region-up)
 (global-set-key (kbd "M-<down>") 'move-region-down)
 
+;; configuration languages etc.
+
+;; Markdown
+(use-package markdown-mode)
+(use-package markdown-toc)
+(use-package grip-mode
+  :hook
+  ((markdown-mode org-mode) . grip-mode))
+
+(use-package yaml)
+
+
 (provide 'util)
 ;;; util.el ends here

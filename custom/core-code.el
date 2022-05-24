@@ -25,13 +25,21 @@
 (use-package lsp-mode
   :straight t
   :commands lsp
-  :hook ((lsp-mode . lsp-enable-which-key-integration)
-         (java-mode . #'lsp-deferred)
+  :config
+  (lsp-enable-which-key-integration t)
+  :hook ((java-mode . lsp)
          (clojure-mode . lsp)
-         ((typescript-mode js2-mode web-mode) . lsp))
+         (javascript-mode . lsp)
+         (typescript-mode . lsp)
+         (typescript-tsx-mode .lsp)
+         (rjsx-mode . lsp)
+         (web-mode . lsp)
+         (js2-mode . lsp)
+         (python-mode .lsp))
   :bind (:map lsp-mode-map
               ("TAB" . completion-at-point))
-  :custom (lsp-headerline-breadcrumb-enable t))
+  :custom
+  (lsp-headerline-breadcrumb-enable t))
 
 (use-package lsp-ui
   :straight t

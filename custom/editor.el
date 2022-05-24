@@ -166,6 +166,8 @@
 (use-package undo-tree
   :straight t
   :diminish undo-tree
+  :custom
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
   :config
   (global-undo-tree-mode))
 
@@ -294,6 +296,17 @@
 
 (use-package treemacs-all-the-icons
   :after (treemacs))
+
+(use-package smartparens
+  :init (require 'smartparens-config)
+  :diminish smartparens-mode
+  :hook (prog-mode . smartparens-mode))
+
+
+(add-hook 'before-save-hook
+          (lambda ()
+            (when (derived-mode-p 'prog-mode)
+              (delete-trailing-whitespace))))
 
 (provide 'editor)
 ;;; editor.el ends here
