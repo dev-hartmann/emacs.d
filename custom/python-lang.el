@@ -31,6 +31,11 @@
                                         ;      ("r" . python-pytest-repeat)
                                         ;      ("p" . python-pytest-dispatch)))
 
+(use-package pyvenv
+  :config
+  (setq pyvenv-workon "emacs")  ; Default venv
+  (pyvenv-tracking-mode 1))
+
 (use-package auto-virtualenv
   :hook
   (python-mode . auto-virtualenv-set-virtualenv))
