@@ -65,7 +65,8 @@
                           (agenda . 5)
                           (recents  . 5))
         dashboard-set-heading-icons t
-        dashboard-set-file-icons t))
+        dashboard-set-file-icons t)
+  (dashboard-setup-startup-hook))
 
 (provide 'util)
-;;; util.el ends here  (dashboard-setup-startup-hook))
+;;; util.el ends here  )
