@@ -19,17 +19,21 @@
     (add-to-list 'exec-path (expand-file-name "shims" (or (getenv "PYENV_ROOT") "~/.pyenv")))))
 
 
-(use-package python-pytest
-  :commands python-pytest-dispatch
-  :bind
-  (:map python-mode-map
-    ("a" . python-pytest)
-    ("f" . python-pytest-file-dwim)
-    ("F" . python-pytest-file)
-    ("t" . python-pytest-function-dwim)
-    ("T" . python-pytest-function)
-    ("r" . python-pytest-repeat)
-    ("p" . python-pytest-dispatch)))
+                                        ;(use-package python-pytest
+                                        ;  :commands python-pytest-dispatch
+                                        ;:bind
+                                        ;(:map python-mode-map
+                                        ;      ("a" . python-pytest)
+                                        ;      ("f" . python-pytest-file-dwim)
+                                        ;      ("F" . python-pytest-file)
+                                        ;      ("t" . python-pytest-function-dwim)
+                                        ;      ("T" . python-pytest-function)
+                                        ;      ("r" . python-pytest-repeat)
+                                        ;      ("p" . python-pytest-dispatch)))
+
+(use-package auto-virtualenv
+  :hook
+  (python-mode . auto-virtualenv-set-virtualenv))
 
 (use-package pyimport
   :after python)

@@ -1,6 +1,6 @@
 ;;; ui.el --- -*- lexical-binding: t; -*-
 
-(when window-system 
+(when window-system
   (when (fboundp 'tool-bar-mode)
     (tool-bar-mode -1))
   (when (and (not (eq system-type 'darwin)) (fboundp 'menu-bar-mode))
@@ -33,6 +33,40 @@
   (doom-modeline-workspace-name nil)
   :config
   (doom-modeline-mode))
+
+(defun no-golden-ratio ()
+  (golden-ratio-mode -1))
+
+(use-package golden-ratio
+  :diminish golden-ratio-mode
+  :config
+  (setq
+   golden-ratio-exclude-modes '("ediff-mode"
+                                "eshell-mode"
+                                "dired-mode"
+                                "undo-tree-mode"))
+  :init
+  (golden-ratio-mode 1))
+
+(use-package dimmer
+  :custom (dimmer-fraction 0.3)
+  :config (dimmer-mode))
+
+(use-package centaur-tabs
+  :config
+  (centaur-tabs-mode t)
+  :custom
+  (centaur-tabs-set-icons nil)
+  (centaur-tabs-show-new-tab-button nil)
+  (centaur-tabs-set-close-button nil)
+  (centaur-tabs-enable-ido-completion nil)
+  :bind
+  (("s-{" . #'centaur-tabs-backward)
+   ("s-}" . #'centaur-tabs-forward)))
+
+(use-package solaire-mode
+  :straight t
+  :hook (after-init . solaire-global-mode))
 
 (provide 'ui)
 ;;; ui.el ends here

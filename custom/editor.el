@@ -1,15 +1,4 @@
 ;;; editor.el --- -*- lexical-binding: t; -*-
-(setq-default indent-tabs-mode nil
-              tab-width 8
-              require-final-newline t
-              sentence-end-double-space nil
-              save-place-file "~/.emacs.d/backups/saveplace"
-              fringes-outside-margins t
-              custom-file "~/.emacs.d/.custom.el"
-              vc-follow-symlinks t
-              version-control t
-              kill-ring-max 120)
-
 (use-package imenu
   :straight (:type built-in)
   :defer t
@@ -48,6 +37,25 @@
       (buffer (all-the-icons-completion-get-buffer-icon cand))
       (project-buffer (all-the-icons-completion-get-buffer-icon cand))
       (t ""))))
+
+(use-package dired+
+  :straight (dired+
+             :type git :host github
+             :repo "emacsmirror/emacswiki.org"
+             :files ("dired+.el"))
+  :after dired
+  :config
+  (diredp-toggle-find-file-reuse-dir 1))
+
+(use-package diredfl
+  :straight t
+  :after dired
+  :config
+  (diredfl-global-mode))
+
+(use-package all-the-icons-dired
+  :after all-the-icons
+  :hook (dired-mode . all-the-icons-dired-mode))
 
 ;; Support for editorconfig
 (use-package editorconfig
@@ -153,7 +161,8 @@
   :defer t
   :commands highlight-indent-guides-mode
   :diminish highlight-indent-guides-mode
-
+  :hook
+  (prog-mode . highlight-indent-guides-mode)
   :custom
   (highlight-indent-guides-auto-even-face-perc 3)
   (highlight-indent-guides-auto-odd-face-perc 2.5)
@@ -307,6 +316,12 @@
           (lambda ()
             (when (derived-mode-p 'prog-mode)
               (delete-trailing-whitespace))))
+
+
+(use-package aggressive-indent
+  :straight t
+  :hook
+  (prog-mode . aggressive-indent-mode))
 
 (provide 'editor)
 ;;; editor.el ends here

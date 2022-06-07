@@ -57,6 +57,15 @@
 
 (use-package yaml)
 
+(use-package dashboard
+  :config
+  (setq dashboard-startup-banner 3
+        dashboard-filter-agenda-entry 'dashboard-no-filter-agenda
+        dashboard-items '((projects . 5)
+                          (agenda . 5)
+                          (recents  . 5))
+        dashboard-set-heading-icons t
+        dashboard-set-file-icons t))
 
 (provide 'util)
-;;; util.el ends here
+;;; util.el ends here  (dashboard-setup-startup-hook))

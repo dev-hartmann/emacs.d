@@ -5,4 +5,5 @@
 
 (use-package rg)
 
+(provide 'search)
 ;;; search.el ends here

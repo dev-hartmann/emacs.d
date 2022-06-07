@@ -9,7 +9,15 @@
 (show-paren-mode t)
 (savehist-mode t)
 (recentf-mode t)
+(save-place-mode t)
 
+(use-package auto-package-update
+  :straight t
+  :commands update-packages
+  :custom
+  (auto-package-update-delete-old-versions t)
+  :config
+  (auto-package-update-maybe))
 
 (use-package exec-path-from-shell
   :custom
@@ -43,7 +51,7 @@
          ("C-s" . consult-line)
          ("C-M-l" . consult-imenu)
          ("C-M-j" . persp-switch-to-buffer*)
-         ("C-x C-b" . consult-buffer)
+         ("C-c b b" . consult-buffer)
          ("C-c C-p" . consult-projectile)
          :map minibuffer-local-map
          ("C-r" . consult-history))
@@ -86,7 +94,6 @@
          :map minibuffer-local-map
          ("C-d" . embark-act))
   :config
-
   ;; Show Embark actions via which-key
   (setq embark-action-indicator
         (lambda (map)
@@ -101,6 +108,20 @@
   :hook
   (embark-collect-mode . embark-consult-preview-minor-mode))
 
+(use-package crux
+  :bind (("C-a" . crux-move-beginning-of-line)
+         ("C-k" . crux-smart-kill-line)
+         ("M-RET" . crux-smart-open-line-above)
+         ("S-RET" . crux-smart-open-line)
+         ("C-c e" . crux-eval-and-replace)
+         ("C-c b c" . crux-cleanup-buffer-or-region)))
+
+(add-hook 'before-save-hook #'crux-cleanup-buffer-or-region)
+(add-hook 'before-save-hook #'delete-trailing-whitespace)
+
+(use-package keychain-environment
+  :config
+  (keychain-refresh-environment))
 
 (provide 'core)
 ;;; core.el ends here

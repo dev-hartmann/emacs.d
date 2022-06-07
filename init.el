@@ -32,6 +32,9 @@
   :config
   (gcmh-mode +1))
 
+(use-package no-littering
+  :straight t)
+
 (defun setup-load-path ()
   "Set up load path for the initialization process"
   (setq user-home-directory (getenv "HOME"))
@@ -47,9 +50,11 @@
 (require 'editor)
 (require 'ui)
 (require 'settings)
+(require 'search)
+(require 'navigation)
 
 (when (eq system-type 'darwin)
-    (require 'macos))
+  (require 'macos))
 (require 'util)
 (require 'core-code)
 
@@ -57,3 +62,5 @@
 (require 'python-lang)
 (require 'typescript)
 (require 'devops)
+
+(require 'transparency)
