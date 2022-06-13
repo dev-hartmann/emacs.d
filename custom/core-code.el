@@ -1,6 +1,5 @@
 ;;; core-code.el
 
-
 ;; Pop up a shell everywhere
 (use-package shell-pop
   :bind (("C-x t" . shell-pop)
@@ -24,28 +23,9 @@
 ;; LSP
 (use-package lsp-mode
   :straight t
-  :commands lsp
+  :commands (lsp lsp-deferred)
   :config
-  (lsp-register-custom-settings
-   '(("pyls.plugins.pyls_mypy.enabled" t t)
-     ("pyls.plugins.pyls_mypy.live_mode" nil t)
-     ("pyls.plugins.pyls_black.enabled" t t)
-     ("pyls.plugins.pyls_isort.enabled" t t)
-
-     ;; Disable these as they're duplicated by flake8
-     ("pyls.plugins.pycodestyle.enabled" nil t)
-     ("pyls.plugins.mccabe.enabled" nil t)
-     ("pyls.plugins.pyflakes.enabled" nil t)))
   (lsp-enable-which-key-integration t)
-  :hook ((java-mode . lsp)
-         (clojure-mode . lsp)
-         (javascript-mode . lsp)
-         (typescript-mode . lsp)
-         (typescript-tsx-mode .lsp)
-         (rjsx-mode . lsp)
-         (web-mode . lsp)
-         (js2-mode . lsp)
-         (python-mode .lsp))
   :bind (:map lsp-mode-map
               ("TAB" . completion-at-point))
   :custom
@@ -70,10 +50,12 @@
 
 ;; Completion via company
 (use-package company
+  :after lsp
   :straight t
   :diminish
   :hook
-  (prog-mode . company-mode)
+  ((lsp-mode . comppany-mode)
+   (prog-mode . company-mode))
   :config
   (setq company-idle-delay 0
         company-minimum-prefix-length 1)

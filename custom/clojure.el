@@ -1,6 +1,7 @@
 ;;; cljojure.el
 (use-package clojure-mode
   :magic ("^#![^\n]*/\\(clj\\|clojure\\|bb\\|lumo\\)" . clojure-mode)
+  :hook (clojure-mode . lsp-deferred)
   :init
   (add-to-list 'auto-mode-alist '("\\.ednl$" . clojure-mode))
   :config

@@ -1,8 +1,29 @@
-;;; typescript.el
 (use-package typescript-mode
-  :hook (typescript-mode . rainbow-delimiters-mode)
-  :hook (typescript-tsx-mode . rainbow-delimiters-mode))
+  :hook ((typescript-tsx-mode . rainbow-delimiters-mode)
+         (typescript-mode . rainbow-delimiters-mode)
+         (typescript-mode . lsp-deferred)))
 
+(use-package web-mode
+  :hook ((web-mode . lsp-deferred)
+         (typescript-tsx-mode . lsp-deferred))
+  :mode (("\\.html\\'" . web-mode)
+         ("\\.html\\.eex\\'" . web-mode)
+         ("\\.html\\.tera\\'" . web-mode)
+         ("\\.tsx\\'" . typescript-tsx-mode))
+  :init
+  (define-derived-mode typescript-tsx-mode typescript-mode "TypeScript-tsx")
+  :config
+  (setq web-mode-markup-indent-offset 2
+        web-mode-css-indent-offset 2
+        web-mode-code-indent-offset 2))
+
+(use-package prettier
+  :hook ((typescript-tsx-mode . prettier-mode)
+         (typescript-mode . prettier-mode)
+         (js-mode . prettier-mode)
+         (json-mode . prettier-mode)
+         (css-mode . prettier-mode)
+         (scss-mode . prettier-mode)))
 (use-package rjsx-mode
   :config
   (setq js-chain-indent t
@@ -25,4 +46,3 @@
 (use-package js2-mode)
 
 (provide 'typescript)
-;;; typescript.el ends here

@@ -1,12 +1,8 @@
 ;;; python.el
-(use-package python-mode)
 
-(use-package python
-  :config
-  (setq python-indent-guess-indent-offset-verbose nil)
-  (when (and (executable-find "python3")
-             (string= python-shell-interpreter "python"))
-    (setq python-shell-interpreter "python3")))
+(use-package python-mode
+  :custom
+  (python-shell-interpreter "python3"))
 
 (use-package pip-requirements
   :after python)
@@ -31,10 +27,12 @@
                                         ;      ("r" . python-pytest-repeat)
                                         ;      ("p" . python-pytest-dispatch)))
 
-(use-package pyvenv
-  :config
-  (setq pyvenv-workon "emacs")  ; Default venv
-  (pyvenv-tracking-mode 1))
+(use-package pipenv
+  :hook (python-mode . pipenv-mode)
+  :init
+  (setq
+   pipenv-projectile-after-switch-function
+   #'pipenv-projectile-after-switch-extended))
 
 (use-package auto-virtualenv
   :hook
@@ -44,12 +42,12 @@
   :after python)
 
 (use-package py-isort
-   :after python)
+  :after python)
 
 (use-package lsp-pyright
-  :hook (python-mode . (lambda () (require 'lsp-pyright)))
-  :init (when (executable-find "python3")
-          (setq lsp-pyright-python-executable-cmd "python3")))
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp-deferred))))
 
 (provide 'python-lang)
 ;;; python.el ends here
