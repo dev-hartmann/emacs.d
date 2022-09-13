@@ -52,6 +52,8 @@
   :custom (dimmer-fraction 0.3)
   :config (dimmer-mode))
 
+
+
 (use-package centaur-tabs
   :config
   (centaur-tabs-mode t)

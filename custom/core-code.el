@@ -48,6 +48,8 @@
   (dap-auto-configure-features '(sessions locals controls tooltip))
   :config (dap-auto-configure-mode))
 
+(use-package eglot)
+
 ;; Completion via company
 (use-package company
   :after lsp
@@ -84,6 +86,11 @@
   :defer t
   :config
   (flycheck-package-setup))
+
+(use-package apheleia
+  :straight t
+  :config
+  (apheleia-global-mode +1))
 
 (provide 'core-code)
 ;;; core-code.el ends here

@@ -1,3 +1,10 @@
+;; Define and initialise package repositories
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+
+
+
 ;; Setup straight.el as package manager
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -14,6 +21,8 @@
 
 (straight-use-package 'use-package)
 
+(package-initialize)
+
 (setq straight-cache-autoloads t
       straight-check-for-modifications '(check-on-save find-when-checking)
       straight-profiles '((nil . "default.el")
@@ -21,6 +30,18 @@
       straight-repository-branch "develop"
       straight-use-package-by-default t
       use-package-always-ensure nil)
+
+
+(defun setup-load-path ()
+  "Set up load path for the initialization process"
+  (setq user-home-directory (getenv "HOME"))
+  (setq user-customizations-directory (concat user-emacs-directory "custom/"))
+  (add-to-list 'load-path user-customizations-directory))
+
+(setup-load-path)
+
+;; start emacs as server to send files from cli/shell to this instance
+(server-start)
 
 (use-package gcmh
   :demand
@@ -34,17 +55,6 @@
 
 (use-package no-littering
   :straight t)
-
-(defun setup-load-path ()
-  "Set up load path for the initialization process"
-  (setq user-home-directory (getenv "HOME"))
-  (setq user-customizations-directory (concat user-emacs-directory "custom/"))
-  (add-to-list 'load-path user-customizations-directory))
-
-;; start emacs as server to send files from cli/shell to this instance
-(server-start)
-
-(setup-load-path)
 
 (require 'core)
 (require 'editor)
@@ -62,5 +72,7 @@
 (require 'python-lang)
 (require 'typescript)
 (require 'devops)
+(require 'org)
+
 
 (require 'transparency)

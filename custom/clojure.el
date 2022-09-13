@@ -11,6 +11,15 @@
         ;; cider complaining.
         clojure-verify-major-mode nil))
 
+;;(add-hook 'clojure-mode-hook 'eglot-ensure)
+(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+(add-hook 'clojure-mode-hook #'subword-mode)
+(add-hook 'clojure-mode-hook #'smartparens-strict-mode)
+(add-hook 'clojure-mode-hook #'aggressive-indent-mode)
+
+(use-package clojure-snippets
+  :straight t)
+
 (use-package cider
   :diminish cider-mode
   :config
@@ -28,7 +37,6 @@
   :config (cljr-add-keybindings-with-prefix "C-c C-m"))
 
 (use-package clojure-mode-extra-font-locking)
-
 (setq cider-show-error-buffer t
       cider-auto-select-error-buffer t
       cider-repl-wrap-history t)
